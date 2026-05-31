@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة النقاط - نظام متكامل</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0f1e;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --border: #1e2d47;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 50% 0%, #0f2040 0%, var(--bg) 70%);
+}
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(0,212,255,0.07);
+}
+.login-logo { font-size: 3rem; margin-bottom: 0.75rem; }
+.login-box h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.3rem; }
+.login-box p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+.login-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+  letter-spacing: 4px;
+  text-align: center;
+  margin-bottom: 12px;
+  outline: none;
+  font-family: 'Cairo', sans-serif;
+  transition: border-color 0.2s;
+}
+.login-input:focus { border-color: var(--accent); }
+.login-btn {
+  width: 100%;
+  padding: 11px;
+  background: linear-gradient(135deg, #0ea5e9, var(--accent2));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.login-btn:hover { opacity: 0.88; }
+.login-error {
+  display: none;
+  color: var(--danger);
+  font-size: 0.82rem;
+  margin-top: 10px;
+}
+
+/* ── DASHBOARD ── */
+#dashboard { display: none; }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.header-title { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary {
+  background: linear-gradient(135deg, #0ea5e9, var(--accent2));
+  border-color: transparent;
+  color: #fff;
+}
+.btn-primary:hover { opacity: 0.88; color: #fff; }
+.btn-outline { background: transparent; }
+.btn-confirm-del {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.btn-confirm-del:hover { opacity: 0.85; color: #fff; }
+
+main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+
+/* ── PERIOD BAR ── */
+.period-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.period-bar .period-info { flex: 1; }
+.period-bar .period-lbl { font-size: 0.72rem; color: var(--muted); margin-bottom: 2px; }
+.period-bar .period-name { font-size: 0.95rem; font-weight: 700; color: var(--accent); }
+.period-nav { display: flex; gap: 6px; }
+
+/* ── STATS GRID ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 14px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.blue::before  { background: #3b82f6; }
+.stat-card.gold::before  { background: var(--warn); }
+.stat-card.S::before     { background: #a855f7; }
+.stat-card.A::before     { background: #3b82f6; }
+.stat-card.B::before     { background: var(--warn); }
+.stat-card.C::before     { background: var(--muted); }
+.stat-icon { font-size: 1.4rem; margin-bottom: 6px; }
+.stat-value { font-size: 1.7rem; font-weight: 900; line-height: 1; }
+.stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+/* ── GRADE SCALE ── */
+.grade-scale {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.grade-scale-title { font-size: 0.78rem; color: var(--muted); margin-left: 6px; }
+.gs-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+.gs-badge {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  font-weight: 900;
+  font-size: 0.82rem;
+  text-align: center;
+  line-height: 26px;
+}
+.gs-S { background: rgba(168,85,247,0.18); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
+.gs-A { background: rgba(59,130,246,0.18); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+.gs-B { background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+.gs-C { background: rgba(100,116,139,0.18); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+.gs-desc { color: var(--muted); }
+
+/* ── CONTROLS ── */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.search-input {
+  padding: 9px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.84rem;
+  font-family: 'Cairo', sans-serif;
+  outline: none;
+  flex: 1;
+  min-width: 140px;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input option { background: var(--surface2); }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+thead th {
+  padding: 11px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface2);
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+td { padding: 11px 14px; font-size: 0.88rem; vertical-align: middle; }
+
+/* ── BADGES ── */
+.grade-badge {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 0.95rem;
+  text-align: center;
+  line-height: 32px;
+}
+.grade-S { background: rgba(168,85,247,0.18); color: #a855f7; border: 1px solid rgba(168,85,247,0.35); }
+.grade-A { background: rgba(59,130,246,0.18); color: #60a5fa; border: 1px solid rgba(59,130,246,0.35); }
+.grade-B { background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); }
+.grade-C { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+
+.pts-badge {
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  color: var(--accent);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.count-badge {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.action-btns { display: flex; gap: 5px; align-items: center; }
+.btn-icon {
+  width: 30px; height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+.btn-icon.btn-del:hover { border-color: var(--danger); color: var(--danger); }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+/* ── MODAL ── */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  direction: rtl;
+}
+.modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1.1rem; }
+.form-group { margin-bottom: 13px; }
+.form-label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; }
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-family: 'Cairo', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input option { background: var(--surface2); }
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* points modal */
+.cooldown-note {
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 0.78rem;
+  color: #7dd3fc;
+  margin-bottom: 13px;
+  line-height: 1.6;
+}
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 190px;
+  overflow-y: auto;
+  margin-bottom: 13px;
+}
+.action-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.84rem;
+  background: var(--surface2);
+  transition: all 0.13s;
+}
+.action-item:hover { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+.action-pts { color: var(--accent); font-weight: 700; font-size: 0.88rem; }
+.no-cooldown-tag {
+  font-size: 0.68rem;
+  color: var(--success);
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-right: 4px;
+}
+
+/* history log with edit */
+.history-log {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 0;
+}
+.history-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.history-entry:last-child { border-bottom: none; }
+.history-pts { color: var(--accent); font-weight: 700; min-width: 38px; text-align: center; }
+.history-date { color: var(--muted); font-size: 0.72rem; margin-right: auto; }
+.history-actions {
+  display: flex;
+  gap: 4px;
+  margin-right: 4px;
+}
+.history-edit, .history-del {
+  width: 22px; height: 22px;
+  border: none; background: transparent;
+  color: var(--muted); cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all 0.1s;
+}
+.history-edit:hover { color: var(--accent); background: rgba(0,212,255,0.1); }
+.history-del:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+/* confirm modal */
+.confirm-modal { text-align: center; max-width: 360px; }
+.confirm-icon { font-size: 2.5rem; margin-bottom: 10px; }
+.confirm-name { font-size: 1.05rem; font-weight: 700; color: var(--accent); display: block; margin: 6px 0 14px; }
+.confirm-btns { display: flex; justify-content: center; gap: 10px; margin-top: 1.1rem; }
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 20px;
+  font-size: 0.84rem;
+  font-family: 'Cairo', sans-serif;
+  z-index: 300;
+  opacity: 0;
+  transition: all 0.25s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.success { border-color: var(--success); color: var(--success); }
+#toast.error   { border-color: var(--danger);  color: var(--danger); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--surface2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🏆</div>
+    <h2>لوحة النقاط</h2>
+    <p>أدخل كلمة المرور للوصول</p>
+    <input type="password" id="pw-input" class="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">دخول</button>
+    <div class="login-error" id="login-err">❌ كلمة المرور غير صحيحة</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header>
+    <div class="header-title">🏆 لوحة النقاط</div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openAddModal()">➕ إضافة عضو</button>
+      <!-- <button class="btn btn-outline" onclick="exportData()">💾 تصدير بيانات JSON</button> -->
+      <!-- <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)"> -->
+      <!-- <button class="btn btn-outline" onclick="importJSON()">📂 استيراد بيانات</button> -->
+      <!-- <button class="btn btn-outline" onclick="resetAllData()" style="border-color:#ef4444; color:#ef4444;">⚠️ إعادة تعيين</button> -->
+      <button class="btn btn-outline" onclick="logout()" style="padding:9px 12px">🚪</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="period-bar">
+      <div class="period-info">
+        <div class="period-lbl">الفترة النصف أسبوعية الحالية</div>
+        <div class="period-name" id="period-label">—</div>
+      </div>
+      <div class="period-nav">
+        <button class="btn btn-outline" onclick="prevPeriod()">◀ السابقة</button>
+        <button class="btn btn-outline" onclick="goCurrentPeriod()">الحالية</button>
+        <button class="btn btn-outline" onclick="nextPeriod()">التالية ▶</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-value" id="stat-total">0</div><div class="stat-label">إجمالي الأعضاء</div></div>
+      <div class="stat-card gold"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-points">0</div><div class="stat-label">مجموع نقاط الفترة</div></div>
+      <div class="stat-card S"><div class="stat-icon">🏆</div><div class="stat-value" id="stat-S">0</div><div class="stat-label">تقييم S</div></div>
+      <div class="stat-card A"><div class="stat-icon">🥇</div><div class="stat-value" id="stat-A">0</div><div class="stat-label">تقييم A</div></div>
+      <div class="stat-card B"><div class="stat-icon">🥈</div><div class="stat-value" id="stat-B">0</div><div class="stat-label">تقييم B</div></div>
+      <div class="stat-card C"><div class="stat-icon">⚪</div><div class="stat-value" id="stat-C">0</div><div class="stat-label">تقييم C</div></div>
+    </div>
+
+    <div class="grade-scale">
+      <span class="grade-scale-title">سلّم التقييم:</span>
+      <div class="gs-item"><span class="gs-badge gs-S">S</span><span class="gs-desc">40 نقطة فأكثر — ممتاز</span></div>
+      <div class="gs-item"><span class="gs-badge gs-A">A</span><span class="gs-desc">20 – 39 نقطة — جيد جداً</span></div>
+      <div class="gs-item"><span class="gs-badge gs-B">B</span><span class="gs-desc">10 – 19 نقطة — جيد</span></div>
+      <div class="gs-item"><span class="gs-badge gs-C">C</span><span class="gs-desc">1 – 9 نقاط — ضعيف</span></div>
+      <div class="gs-item"><span class="gs-badge gs-C" style="font-size:0.7rem">—</span><span class="gs-desc">0 نقاط — غير فعال</span></div>
+    </div>
+
+    <div class="controls">
+      <input type="text" class="search-input" placeholder="🔍 بحث بالاسم..." oninput="renderTable()" id="search">
+      <select class="search-input" style="max-width:160px" onchange="renderTable()" id="filter-grade">
+        <option value="">كل التقييمات</option>
+        <option value="S">S — ممتاز</option>
+        <option value="A">A — جيد جداً</option>
+        <option value="B">B — جيد</option>
+        <option value="C">C — ضعيف / غير فعال</option>
+      </select>
+      <select class="search-input" style="max-width:160px" onchange="renderTable()" id="sort-by">
+        <option value="points-desc">الأعلى نقاطاً</option>
+        <option value="points-asc">الأقل نقاطاً</option>
+        <option value="name">الاسم</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>الاسم</th><th>الدوريات</th><th>المناوبات</th><th>نقاط الفترة</th><th>التقييم</th><th>الإجراءات</th></tr></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div id="empty-state" class="empty-state" style="display:none"><div class="empty-icon">📭</div><div>لا يوجد أعضاء بعد</div></div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD/EDIT MEMBER MODAL -->
+<div class="modal-bg" id="member-modal"><div class="modal"><h3 id="modal-title">➕ إضافة عضو جديد</h3><div class="form-group"><label class="form-label">الاسم</label><input type="text" class="form-input" id="m-name" placeholder="اسم العضو"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('member-modal')">إلغاء</button><button class="btn btn-primary" onclick="saveMember()">حفظ</button></div></div></div>
+
+<!-- POINTS MODAL -->
+<div class="modal-bg" id="points-modal"><div class="modal"><h3 id="pts-modal-title">⭐ تسجيل نشاط</h3><div class="cooldown-note">⏱️ <strong>فترة التهدئة بين الدوريات: ساعتان على الأقل</strong><br>✅ لا توجد فترة تهدئة لـ: مناوبة طابق 0 ومناوبة البوابة الأمامية</div><div class="section-title">الدوريات — +3 نقاط للدورية</div><div class="action-list" id="dawriya-list"></div><div class="section-title">المناوبات — +2 نقاط للمناوبة</div><div class="action-list" id="manawba-list"></div><div class="form-group"><label class="form-label">نقاط مخصصة إضافية</label><input type="number" class="form-input" id="custom-pts" placeholder="0" min="0"></div><div class="form-group"><label class="form-label">ملاحظة</label><input type="text" class="form-input" id="pts-note" placeholder="سبب الإضافة..."></div><div class="form-group"><label class="form-label">سجل الفترة الحالية (قابل للتعديل)</label><div class="history-log" id="pts-history"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('points-modal')">إغلاق</button><button class="btn btn-primary" onclick="addCustomPoints()">إضافة نقاط مخصصة</button></div></div></div>
+
+<!-- EDIT HISTORY ENTRY MODAL -->
+<div class="modal-bg" id="edit-history-modal"><div class="modal"><h3>✏️ تعديل سجل النقاط</h3><div class="form-group"><label class="form-label">عدد النقاط</label><input type="number" class="form-input" id="edit-pts" value="0" step="1"></div><div class="form-group"><label class="form-label">الوصف / السبب</label><input type="text" class="form-input" id="edit-label" placeholder="وصف النشاط"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('edit-history-modal')">إلغاء</button><button class="btn btn-primary" onclick="saveHistoryEdit()">💾 حفظ التعديل</button></div></div></div>
+
+<!-- DELETE CONFIRM -->
+<div class="modal-bg" id="delete-modal"><div class="modal confirm-modal"><div class="confirm-icon">🗑️</div><h3>حذف العضو</h3><p>هل أنت متأكد من حذف</p><span class="confirm-name" id="delete-name">—</span><p style="font-size:0.78rem;color:var(--muted);margin-top:-10px">لا يمكن التراجع عن هذا الإجراء</p><div class="confirm-btns"><button class="btn btn-outline" onclick="closeModal('delete-modal')">إلغاء</button><button class="btn btn-confirm-del" onclick="confirmDelete()">🗑️ حذف</button></div></div></div>
+
+<!-- RESET CONFIRM -->
+<div class="modal-bg" id="reset-modal"><div class="modal confirm-modal"><div class="confirm-icon">⚠️</div><h3>إعادة تعيين البيانات</h3><p>سيتم حذف جميع الأعضاء والنقاط نهائياً</p><p style="font-size:0.78rem;color:var(--danger);margin-top:6px">لا يمكن التراجع عن هذا الإجراء</p><div class="confirm-btns"><button class="btn btn-outline" onclick="closeModal('reset-modal')">إلغاء</button><button class="btn btn-confirm-del" onclick="confirmReset()">تأكيد الحذف الكامل</button></div></div></div>
+
+<div id="toast"></div>
+
+<script>
+const PASSWORD    = 'Lion';
+const STORAGE_KEY = 'dashboard_data_v5'; 
+let members = [];
+let editingId = null;
+let ptsTargetId = null;
+let deleteTargetId = null;
+let currentPeriodStart = null;
+let editingHistoryEntryId = null;
+
+const DAWRIYAS = [ 'دورية خارجية' ];
+const MANAWBAT = [
+  { label: 'مناوبة طابق 0',       noCooldown: true  },
+  { label: 'مناوبة البوابة الأمامية', noCooldown: true  },
+];
+
+function getPeriodStart(d) { const date = new Date(d); date.setHours(0,0,0,0); const day = date.getDay(); let diff; if (day === 1) diff=0; else if (day===2) diff=1; else if (day===3) diff=2; else if (day===4) diff=0; else if (day===5) diff=1; else if (day===6) diff=2; else diff=3; const start = new Date(date); start.setDate(date.getDate() - diff); return start; }
+function getPeriodEnd(start) { const end = new Date(start); end.setDate(start.getDate() + 2); end.setHours(23,59,59,999); return end; }
+const DAY_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+function periodLabel(start) { const end = getPeriodEnd(start); const fmt = d => `${DAY_AR[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`; return `${fmt(start)}  —  ${fmt(end)}`; }
+function prevPeriod() { const s = new Date(currentPeriodStart); s.setDate(s.getDate() - 3); currentPeriodStart = getPeriodStart(s); refreshPeriod(); }
+function nextPeriod() { const s = new Date(currentPeriodStart); s.setDate(s.getDate() + 3); currentPeriodStart = getPeriodStart(s); refreshPeriod(); }
+function goCurrentPeriod() { currentPeriodStart = getPeriodStart(new Date()); refreshPeriod(); }
+function refreshPeriod() { document.getElementById('period-label').textContent = periodLabel(currentPeriodStart); renderTable(); }
+
+function getPeriodData(member) { if (!member.history) return { pts: 0, dawriya: 0, manawba: 0 }; const end = getPeriodEnd(currentPeriodStart); let pts=0, dawriya=0, manawba=0; member.history.forEach(h => { const hd = new Date(h.ts || 0); if (hd >= currentPeriodStart && hd <= end) { pts += h.pts; if (h.type === 'dawriya') dawriya++; else if (h.type === 'manawba') manawba++; } }); return { pts, dawriya, manawba }; }
+function getGrade(pts) { if (pts === 0) return 'C'; if (pts >= 40) return 'S'; if (pts >= 20) return 'A'; if (pts >= 10) return 'B'; return 'C'; }
+
+function doLogin() { if (document.getElementById('pw-input').value === PASSWORD) { document.getElementById('login-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; loadData(); } else { document.getElementById('login-err').style.display = 'block'; document.getElementById('pw-input').value = ''; } }
+function logout() { document.getElementById('login-screen').style.display = 'flex'; document.getElementById('dashboard').style.display = 'none'; document.getElementById('pw-input').value = ''; document.getElementById('login-err').style.display = 'none'; }
+function loadData() { const raw = localStorage.getItem(STORAGE_KEY); if (raw) try { members = JSON.parse(raw); } catch { members = []; } if(!members.length) members=[]; currentPeriodStart = getPeriodStart(new Date()); refreshPeriod(); renderTable(); showToast('تم تحميل البيانات المحفوظة','success'); }
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(members)); showToast('تم حفظ البيانات تلقائياً 💾','success'); }
+function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
+
+function updateStats() { let totalPts=0, cS=0,cA=0,cB=0,cC=0; members.forEach(m => { const {pts} = getPeriodData(m); totalPts+=pts; const g=getGrade(pts); if(g==='S') cS++; else if(g==='A') cA++; else if(g==='B') cB++; else cC++; }); document.getElementById('stat-total').textContent=members.length; document.getElementById('stat-points').textContent=totalPts; document.getElementById('stat-S').textContent=cS; document.getElementById('stat-A').textContent=cA; document.getElementById('stat-B').textContent=cB; document.getElementById('stat-C').textContent=cC; }
+
+function renderTable() { const search = document.getElementById('search').value.toLowerCase(); const filterGrade = document.getElementById('filter-grade').value; const sortBy = document.getElementById('sort-by').value; let list = members.map(m => { const {pts,dawriya,manawba}=getPeriodData(m); const grade=getGrade(pts); return {...m, _pts:pts, _d:dawriya, _m:manawba, _g:grade}; }).filter(m => m.name.toLowerCase().includes(search) && (!filterGrade || m._g === filterGrade)); if (sortBy === 'points-desc') list.sort((a,b)=>b._pts - a._pts); else if (sortBy === 'points-asc') list.sort((a,b)=>a._pts - b._pts); else list.sort((a,b)=>a.name.localeCompare(b.name,'ar')); const tbody = document.getElementById('table-body'); const empty = document.getElementById('empty-state'); if (!list.length) { tbody.innerHTML = ''; empty.style.display = 'block'; } else { empty.style.display = 'none'; tbody.innerHTML = list.map((m,i)=>`<tr><td style="color:var(--muted)">${i+1}</td><td><strong>${escHtml(m.name)}</strong></td><td><span class="count-badge">${m._d} × دورية</span></td><td><span class="count-badge">${m._m} × مناوبة</span></td><td><span class="pts-badge">${m._pts} نقطة</span></td><td><span class="grade-badge grade-${m._g}">${m._g}</span></td><td><div class="action-btns"><button class="btn-icon" title="تسجيل نشاط" onclick="openPointsModal('${m.id}')">⭐</button><button class="btn-icon" title="تعديل" onclick="openEditModal('${m.id}')">✏️</button><button class="btn-icon btn-del" title="حذف" onclick="deleteMember('${m.id}')">🗑️</button></div></td></tr>`).join(''); } updateStats(); }
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function openAddModal() { editingId=null; document.getElementById('modal-title').textContent='➕ إضافة عضو جديد'; document.getElementById('m-name').value=''; openModal('member-modal'); }
+function openEditModal(id) { const m=members.find(x=>x.id===id); if(!m)return; editingId=id; document.getElementById('modal-title').textContent='✏️ تعديل العضو'; document.getElementById('m-name').value=m.name; openModal('member-modal'); }
+function saveMember() { const name=document.getElementById('m-name').value.trim(); if(!name){showToast('أدخل اسم العضو','error');return;} if(editingId){ const m=members.find(x=>x.id===editingId); m.name=name; showToast('تم التعديل','success'); }else{ members.push({id:generateId(), name, history:[]}); showToast('تمت الإضافة','success'); } saveData(); renderTable(); closeModal('member-modal'); }
+
+function deleteMember(id) { const m=members.find(x=>x.id===id); if(!m)return; deleteTargetId=id; document.getElementById('delete-name').textContent=m.name; openModal('delete-modal'); }
+function confirmDelete() { members=members.filter(m=>m.id!==deleteTargetId); deleteTargetId=null; saveData(); renderTable(); closeModal('delete-modal'); showToast('تم حذف العضو','error'); }
+
+function openPointsModal(id) { const m=members.find(x=>x.id===id); if(!m)return; ptsTargetId=id; document.getElementById('pts-modal-title').textContent=`⭐ تسجيل نشاط — ${m.name}`; document.getElementById('dawriya-list').innerHTML=DAWRIYAS.map(d=>`<div class="action-item" onclick="addActivity('dawriya','${d.replace(/'/g,"\\'")}',3)"><span>${d}</span><span class="action-pts">+3</span></div>`).join(''); document.getElementById('manawba-list').innerHTML=MANAWBAT.map(mn=>`<div class="action-item" onclick="addActivity('manawba','${mn.label.replace(/'/g,"\\'")}',2)"><span>${mn.label}${mn.noCooldown?'<span class="no-cooldown-tag">بلا تهدئة</span>':''}</span><span class="action-pts">+2</span></div>`).join(''); document.getElementById('custom-pts').value=''; document.getElementById('pts-note').value=''; renderHistory(m); openModal('points-modal'); }
+
+function addActivity(type, label, pts) { const m=members.find(x=>x.id===ptsTargetId); if(!m)return; if(!m.history)m.history=[]; m.history.unshift({id:generateId(), type, label, pts, ts:Date.now()}); if(m.history.length>200)m.history=m.history.slice(0,200); saveData(); renderTable(); renderHistory(m); showToast(`+${pts} نقطة — ${label}`,'success'); }
+function addCustomPoints() { const pts=parseInt(document.getElementById('custom-pts').value)||0; const note=document.getElementById('pts-note').value.trim()||'نقاط مخصصة'; if(pts<=0){showToast('أدخل عدد نقاط صحيح','error');return;} addActivity('custom', note, pts); document.getElementById('custom-pts').value=''; document.getElementById('pts-note').value=''; }
+
+function renderHistory(m) { const el=document.getElementById('pts-history'); const end=getPeriodEnd(currentPeriodStart); const entries=(m.history||[]).filter(h=>{ const hd=new Date(h.ts||0); return hd>=currentPeriodStart && hd<=end; }); if(!entries.length){el.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:8px">لا يوجد سجل في هذه الفترة</div>';return;} el.innerHTML=entries.map(h=>{ const d=new Date(h.ts||0); const ds=d.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})+' · '+d.toLocaleDateString('ar-SA',{month:'short',day:'numeric'}); return `<div class="history-entry"><span style="flex:1; font-weight:500;">${escHtml(h.label)}</span><span class="history-pts">+${h.pts}</span><span class="history-date">${ds}</span><div class="history-actions"><button class="history-edit" onclick="editHistoryEntry('${h.id}')" title="تعديل">✏️</button><button class="history-del" onclick="removeEntry('${h.id}')" title="حذف">✕</button></div></div>`; }).join(''); }
+
+function editHistoryEntry(entryId) { const m=members.find(x=>x.id===ptsTargetId); if(!m)return; const entry=m.history.find(h=>h.id===entryId); if(!entry)return; editingHistoryEntryId=entryId; document.getElementById('edit-pts').value=entry.pts; document.getElementById('edit-label').value=entry.label; openModal('edit-history-modal'); }
+function saveHistoryEdit() { const newPts=parseInt(document.getElementById('edit-pts').value); if(isNaN(newPts)){showToast('القيمة غير صحيحة','error');return;} const newLabel=document.getElementById('edit-label').value.trim(); if(!newLabel){showToast('الوصف مطلوب','error');return;} const m=members.find(x=>x.id===ptsTargetId); if(!m)return; const entry=m.history.find(h=>h.id===editingHistoryEntryId); if(entry){ entry.pts=newPts; entry.label=newLabel; saveData(); renderTable(); const currentMember=members.find(x=>x.id===ptsTargetId); renderHistory(currentMember); showToast('تم تعديل النقاط بنجاح ✅','success'); } closeModal('edit-history-modal'); }
+
+function removeEntry(entryId) { const m=members.find(x=>x.id===ptsTargetId); if(!m)return; m.history=m.history.filter(h=>h.id!==entryId); saveData(); renderTable(); renderHistory(m); showToast('تم حذف السجل','error'); }
+
+// Export / Import / Reset
+function exportData() { const dataStr = JSON.stringify(members, null, 2); const blob = new Blob([dataStr], {type: "application/json"}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `members_backup_${today()}.json`; a.click(); URL.revokeObjectURL(url); showToast('تم تصدير البيانات بنجاح','success'); }
+function importJSON(){document.getElementById('import-file').click();}
+function handleImport(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(Array.isArray(data)){members=data;saveData();renderTable();showToast(`تم استيراد ${data.length} عضو ✅`,'success');}else throw new Error();}catch{showToast('ملف غير صالح ❌','error');}};reader.readAsText(file);e.target.value='';}
+function resetAllData(){ openModal('reset-modal'); }
+function confirmReset(){ members=[]; saveData(); renderTable(); closeModal('reset-modal'); showToast('تم مسح جميع البيانات نهائياً','error'); }
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-bg').forEach(bg=>{bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open'));});
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`show ${type}`;setTimeout(()=>t.className='',2600);}
+function today(){return new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-');}
+</script>
+</body>
+</html>
